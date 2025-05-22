@@ -72,15 +72,6 @@ def generate_ef_plot(ef, performance):
     ret_tangent = performance[0]
     std_tangent = performance[1]
 
-    ax.scatter(
-        std_tangent,
-        ret_tangent,
-        marker="*",
-        s=100,
-        c="r",
-        label="Max Quadratic Utility",
-    )
-
     # Update legend
     ax.legend()
 
