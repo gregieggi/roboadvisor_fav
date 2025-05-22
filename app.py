@@ -101,7 +101,7 @@ def results():
             portfolio=portfolio_data,
             charts=charts,
             market_state=market_state,
-            sum_score=int(sum(session["sum_possible_score"])
+            sum_score=int(sum(session["sum_possible_score"]))
         )
     except Exception as e:
         import traceback
