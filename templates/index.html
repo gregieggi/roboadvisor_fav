@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}RoboAdvisor - Welcome{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>🤖 RoboAdvisor</h1>
+    <div style="text-align: center;">
+        <h2>Personalized Investment Portfolio Optimizer</h2>
+        <p class="metric-title">
+            Answer 8 simple questions to get a customized investment portfolio 
+            tailored to your risk tolerance and financial goals.
+        </p>
+        
+        <div style="margin: 40px 0;">
+            <div class="metric">
+                <div class="metric-value">8</div>
+                <div class="metric-label">Quick Questions</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">📊</div>
+                <div class="metric-label">Portfolio Analysis</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">5</div>
+                <div class="metric-label">Minutes</div>
+            </div>
+        </div>
+
+        <form action="{{ url_for('start_assessment') }}" method="post">
+            <div class="investment-box">
+                <label for="investment_amount" class="investment">
+                    How much money do you want to invest?
+                </label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 15px; top: 12px; color: #7f8c8d;">€</span>
+                    <input 
+                        type="text" 
+                        id="investment_amount" 
+                        name="investment_amount" 
+                        placeholder="0.00" 
+                        pattern="[0-9]*\.?[0-9]*" 
+                        style="width: 100%; padding: 12px 15px 12px 30px; font-size: 1.1em; border: 1px solid #ddd; border-radius: 5px;"
+                        required
+                    >
+                    <span style="position: absolute; right: 15px; top: 12px; color: #7f8c8d;">EUR</span>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button type="submit" class="btn">
+                    Start Risk Assessment
+                </button>
+            </div>
+        </form>
+        
+        <div class="instructions-box">
+            <h3 class="instructions-title">How it works:</h3>
+            <div style="text-align: left; display: inline-block;">
+                <p><strong>1.</strong> Answer questions about your financial situation and goals</p>
+                <p><strong>2.</strong> Our algorithm calculates your risk tolerance</p>
+                <p><strong>3.</strong> Get an optimized portfolio with detailed analysis</p>
+                <p><strong>4.</strong> View allocation charts and performance metrics</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

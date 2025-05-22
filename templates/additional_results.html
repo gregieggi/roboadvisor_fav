@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Your Portfolio - RoboAdvisor{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>A closer look at your portfolio</h1>
+
+    <!-- Efficient Frontier Section -->
+    <div class="result-section">
+        <h2>Your Efficient Frontier</h2>
+        <div style="text-align: center;">
+            <img src="data:image/png;base64,{{ ef_plot }}" alt="Efficient Frontier" style="max-width: 100%; height: auto;">
+        </div>
+
+        <div class="navigation">
+            <a href="{{ url_for('results') }}" class="btn btn-secondary">
+                ← Back to Results
+            </a>
+            <a href="{{ url_for('index') }}" class="btn">
+                Start New Assessment
+            </a>
+        </div>
+    </div>
+{% endblock%}

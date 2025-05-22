@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Your Portfolio - RoboAdvisor{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>🎯 Your Optimized Portfolio</h1>
+    
+    <!-- Risk Profile Section -->
+    <div class="result-section">
+        <h2 style="text-align: center;">Your Risk Profile</h2>
+        <div style="text-align: center;">
+            <div class="metric">
+                <div class="metric-value">{{ "%.1f"|format(risk_aversion * 100) }}%</div>
+                <div class="metric-label">Risk Aversion Score</div>
+            </div>
+            <p style="color: #7f8c8d; margin-top: 15px;">
+                {% if risk_aversion < 0.47 %}
+                    <strong>Aggressive Investor:</strong> You're comfortable with high risk for potentially high returns.
+                {% elif 0.47 < risk_aversion < 0.6 %}
+                    <strong>Balanced Investor:</strong> You prefer balanced growth with manageable risk.
+                {% else %}
+                    <strong>Conservative Investor:</strong> You prioritize capital preservation with steady returns.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    
+    <!-- Portfolio Performance -->
+    <div class="chart-container">
+        <h2>Performance Metrics</h2>
+    </div>
+
+    <div class="result-section">
+        <div style="text-align: center;">
+            <h2 style="margin-bottom: 5px; margin-top: 10px;">Portfolio {{ portfolio.key }}</h2>
+            <div class="metric">
+                <div class="metric-value">{{ "%.2f"|format(portfolio.performance.expected_annual_return * 100) }}%</div>
+                <div class="metric-label">Expected Annual Return</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{{ "%.2f"|format(portfolio.performance.annual_volatility * 100) }}%</div>
+                <div class="metric-label">Annual Volatility</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{{ "%.2f"|format(portfolio.performance.sharpe_ratio) }}</div>
+                <div class="metric-label">Sharpe Ratio</div>
+            </div>
+        </div>
+
+        {% if charts.performance %}
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ charts.performance }}" alt="Performance Metrics Chart">
+        </div>
+        {% endif %}
+
+    </div>
+    
+    
+
+    <div class="result-section">
+    <!-- Portfolio Allocation -->
+        <div class="chart-container">
+            <h2>Recommended Allocation</h2>
+        </div>
+        <div>
+            <p style="color: #7f8c8d;">
+                Based on your risk profile, for an investment strategy of <strong>€{{ portfolio.total_portfolio_value|int }}</strong> we recommend you allocate your funds into the following {{ portfolio.allocation|length }} assets:
+            </p>
+        </div>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <thead>
+                    <tr style="background: #3498db; color: white;">
+                        <th style="padding: 12px; text-align: left;">Asset</th>
+                        <th style="padding: 12px; text-align: right;">Shares</th>
+                        <th style="padding: 12px; text-align: right;">Weight</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asset, shares in portfolio.allocation.items() %}
+                    <tr style="border-bottom: 1px solid #ecf0f1;">
+                        <td style="padding: 12px; font-weight: bold;">{{ asset }}</td>
+                        <td style="padding: 12px; text-align: right;">{{ shares }}</td>
+                        <td style="padding: 12px; text-align: right;">
+                            {% if portfolio.weights and asset in portfolio.weights %}
+                                {{ "%.2f"|format(portfolio.weights[asset] * 100) }}%
+                            {% else %}
+                                -
+                            {% endif %}
+                    {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="success">
+            <strong>Remaining Cash:</strong> €{{ "%.2f"|format(portfolio.leftover) }}
+        </div>
+
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ charts.allocation }}" alt="Portfolio Allocation Chart">
+        </div>
+
+    </div>
+
+    <!-- Market Scenario Selection -->
+    <div class="result-section" style="background: #ecf0f1; text-align: center;">
+        <h2 style="margin-bottom: 20px;">📊 Market Scenario Analysis</h2>
+        <p style="color: #7f8c8d; margin-bottom: 25px;">
+            See how your portfolio would perform under different market conditions:
+        </p>
+        <p style="color: #3498db; margin-bottom: 20px;">
+            <strong>Current Market State: {{ market_state|default('normal')|title }}</strong>
+        </p>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <button onclick="setMarketState('boom')" class="scenario-btn boom-btn" {% if market_state == 'boom' %}style="opacity: 0.6; cursor: not-allowed;" disabled{% endif %}>
+                📈 Boom
+            </button>
+            <button onclick="setMarketState('recession')" class="scenario-btn recession-btn" {% if market_state == 'recession' %}style="opacity: 0.6; cursor: not-allowed;" disabled{% endif %}>
+                📉 Recession
+            </button>
+            {% if market_state != 'normal' %}
+            <button onclick="setMarketState('normal')" class="scenario-btn normal-btn">
+                ⚖️ Normal
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Important Notes -->
+    <div class="result-section" style="background: #f39c12; color: white;">
+        <h2 style="color: white;">⚠️ Important Disclaimer</h2>
+        <p style="margin: 15px 0;">
+            This portfolio recommendation is based on historical data and mathematical optimization. 
+            Past performance does not guarantee future results. Please consult with a financial 
+            advisor before making investment decisions.
+        </p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>This is for educational purposes only</li>
+            <li>Market conditions can change rapidly</li>
+            <li>Diversification does not guarantee profits or prevent losses</li>
+            <li>Consider your complete financial situation</li>
+        </ul>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="navigation">
+        <a href="{{ url_for('index') }}" class="btn">
+            Start New Assessment
+        </a>
+        <a href="{{ url_for('additional_results') }}" class="btn">
+            More results
+        </a>
+        <button onclick="window.print()" class="btn btn-secondary">
+            Print Results
+        </button>
+    </div>
+</div>
+
+<style>
+.scenario-btn {
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.boom-btn {
+    background: #27ae60;
+    color: white;
+}
+
+.boom-btn:hover:not(:disabled) {
+    background: #219a52;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.recession-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.recession-btn:hover:not(:disabled) {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.normal-btn {
+    background: #3498db;
+    color: white;
+}
+
+.normal-btn:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.scenario-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.scenario-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media print {
+    .navigation { display: none; }
+    .btn { display: none; }
+    .scenario-btn { display: none; }
+    body { background: white; }
+    .card { box-shadow: none; }
+}
+</style>
+
+<script>
+function setMarketState(state) {
+    // Show loading indicator (optional)
+    document.body.style.cursor = 'wait';
+    
+    // Reload the page with the new market state as a query parameter
+    window.location.href = '{{ url_for("results") }}?market_state=' + state;
+}
+</script>
+{% endblock %}

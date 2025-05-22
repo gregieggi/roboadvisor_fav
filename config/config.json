@@ -1,0 +1,44 @@
+{
+    "TICKERS": {
+        "EQUITIES": [
+            "VOO",
+            "IVV",
+            "VTI",
+            "VEA",
+            "VTV",
+            "IJH",
+            "VXUS",
+            "VIG",
+            "VO",
+            "IJR",
+            "SCHD",
+            "SPLG",
+            "ITOT",
+            "VB",
+            "USCA",
+            "USCL",
+            "ESGV",
+            "KLMN",
+            "VSGX",
+            "PABU"
+        ],
+        "BONDS": [
+            "BND",
+            "AGG",
+            "VCIT",
+            "BSV",
+            "VTEB",
+            "VCSH",
+            "VGIT",
+            "BIV",
+            "EAGG",
+            "SUSB",
+            "VCEB",
+            "EUSB"
+        ],
+        "COMMODITIES": [
+            "IAUM",
+            "HGER"
+        ]},
+    "START_DATE": "2020-01-01"
+}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Question {{ question_id }} - RoboAdvisor{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1>Risk Assessment</h1>
+        <p>Question {{ question_id }} of {{ total_questions }}</p>
+        
+        <!-- Progress bar -->
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+    </div>
+    
+    <form action="{{ url_for('submit_answer') }}" method="POST">
+        <input type="hidden" name="question_id" value="{{ question.id }}">
+        
+        <div class="question-container">
+            <h2>{{ question.question }}</h2>
+            
+            <ul class="options">
+                {% for option in question.options %}
+                <li class="option">
+                    <label style="cursor: pointer; display: block; width: 100%;">
+                        <input type="radio" name="answer" value="{{ option.score }}" required style="margin-right: 10px;">
+                        {{ option.text }}
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="navigation">
+            {% if question_id == 1 %}
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                ← Back to Start
+            </a>
+            {% endif %}
+
+            {% if question_id > 1 %}
+            <a href="{{ url_for('question', question_id=question_id-1) }}" class="btn btn-secondary">
+                ← Previous
+            </a>
+            {% endif %}
+            
+            <button type="submit" class="btn">
+                {% if question_id < total_questions %}
+                    Next →
+                {% else %}
+                    Get My Portfolio
+                {% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const radioButtons = document.querySelectorAll('input[type="radio"]');
+});
+</script>
+{% endblock %}
