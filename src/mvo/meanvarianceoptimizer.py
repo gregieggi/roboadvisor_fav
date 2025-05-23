@@ -2,6 +2,7 @@ from pypfopt import EfficientFrontier, risk_models, expected_returns
 from pypfopt.objective_functions import L2_reg
 from pypfopt.discrete_allocation import DiscreteAllocation, get_latest_prices
 import numpy as np
+import pandas as pd
 
 
 class MeanVarianceOptimizer:
@@ -22,7 +23,7 @@ class MeanVarianceOptimizer:
         """
         self.expected_returns = expected_returns.mean_historical_return(self.df)
         self.cov_matrix = risk_models.sample_cov(self.df)
-        self.ef = EfficientFrontier(self.expected_returns, self.cov_matrix)
+        self.ef = EfficientFrontier(self.expected_returns, self.cov_matrix, solver="ECOS")
 
         plotting_ef = self.ef.deepcopy()
 
@@ -95,9 +96,23 @@ class MeanVarianceOptimizer:
         allocation, leftover = da.greedy_portfolio()
         return allocation, leftover
 
-    def calculate_performance(self):
+    def calculate_performance(self, weights):
         """
-        Calculate portfolio performance metrics.
+        Calculate performance for specific portfolio weights.
         """
-        portfolio_performance = self.ef.portfolio_performance()
-        return portfolio_performance
+
+        if isinstance(weights, dict):
+            weights_series = pd.Series(weights)
+        else:
+            weights_series = weights
+
+        # Calculate performance for specific weights
+        expected_return = self.expected_returns.dot(weights_series)
+        portfolio_variance = weights_series.T.dot(self.cov_matrix).dot(weights_series)
+        volatility = np.sqrt(portfolio_variance)
+
+        # calculate Sharpe ratio
+        risk_free_rate = 0.02
+        sharpe_ratio = (expected_return - risk_free_rate) / volatility
+
+        return expected_return, volatility, sharpe_ratio

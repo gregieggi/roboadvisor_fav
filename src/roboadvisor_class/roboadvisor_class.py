@@ -86,7 +86,7 @@ class RoboAdvisorClass:
         allocation, leftover = self.optimizer.post_process_weights(
             weights, self.investment_amount
         )
-        performance = self.optimizer.calculate_performance()
+        performance = self.optimizer.calculate_performance(weights)
 
         performance_dict["weights"] = weights
         performance_dict["allocation"] = allocation
